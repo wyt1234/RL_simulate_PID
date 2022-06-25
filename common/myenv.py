@@ -19,6 +19,10 @@ class MyEnv():
         a = np.random.uniform(low=-1, high=1, size=(1, 3))[0]
         return a * self.action_bound / 5
 
+    # 如何定义奖励
+    def get_reward(self):
+        pass
+
     def step(self, action):
         # TODO 每个回合的步骤是否超过阈值，判断是否结束
         pass
