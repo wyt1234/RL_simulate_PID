@@ -7,9 +7,9 @@ class Space():
 
 
 class MyEnv():
-    def __init__(self):
-        observation_space = Space(6)
-        action_space = Space(2)
+    def __init__(self, ):
+        self.observation_space = Space(6)
+        self.action_space = Space(2)
         self.reward = 0
 
     def seed(self, seed):
