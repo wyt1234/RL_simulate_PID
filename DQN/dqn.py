@@ -65,6 +65,7 @@ class DQN:
         self.optimizer = optim.Adam(self.policy_net.parameters(), lr=cfg.lr) # 优化器
         self.memory = ReplayBuffer(cfg.memory_capacity) # 经验回放
 
+    # TODO：
     def choose_action(self, state):
         ''' 选择动作
         '''
@@ -77,6 +78,8 @@ class DQN:
         else:
             action = random.randrange(self.n_actions)
         return action
+
+    # TODO：
     def update(self):
         if len(self.memory) < self.batch_size: # 当memory中不满足一个批量时，不更新策略
             return
