@@ -173,6 +173,7 @@ def nonlinearheli(X, U):
 def device_next_state(Y, U):
     Y, DERX = nonlinearheli(Y, U)
     # Y = Y + DERX * h; % h =0.1
+    timestep = 0.1
     Y = [it2 + Y[i] for i, it2 in enumerate([item * timestep for item in DERX])]
     return Y
 

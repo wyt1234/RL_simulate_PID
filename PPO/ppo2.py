@@ -68,6 +68,8 @@ class Actor(nn.Module):
 
     def forward(self, state):
         dist = self.actor(state)
+        # fixme 这里是不是要转置下？
+        # dist = dist.T
         dist = Categorical(dist)
         return dist
 

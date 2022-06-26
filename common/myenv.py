@@ -1,7 +1,13 @@
+import sys
+import os
+
+curr_path = os.path.dirname(os.path.abspath(__file__))  # 当前文件所在绝对路径
+parent_path = os.path.dirname(curr_path)  # 父路径
+sys.path.append(parent_path)  # 添加路径到系统路径
 import numpy as np
 import torch
 
-from rotor_state_calculator import *
+from common.rotor_state_calculator import *
 
 
 class Space():
@@ -18,12 +24,13 @@ class MyEnv():
         self.observation_space = Space(6)
         self.action_space = Space(2)
         self.reward = 0
-        self.reward_rate = 10  # 奖励10倍于距离缩小
+        self.reward_rate = 1  # todo 奖励10倍于距离缩小
         # fixme 设定一个最终状态（悬停目标）
         self.final_state = np.array([1.4, .0, .0, 0.45, .0, .0])  # 最终需要的观测值
         self.last_observation = np.zeros((len(self.final_state)))  # 最近一次的观测 -> 初始值是0，可修改
         self.last_distance = self.o_distance(self.final_state, self.last_observation)  # 初始化距离比较量
         self.total_step = 1
+        return self.last_observation
 
     # 欧式距离
     def o_distance(self, vector1, vector2):
