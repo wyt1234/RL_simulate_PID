@@ -14,6 +14,7 @@ def evaluate_policy(args, env, agent, state_norm):
     times = 3
     evaluate_reward = 0
     for _ in range(times):
+        # todo re_list = []
         s = env.reset()
         if args.use_state_norm:
             s = state_norm(s, update=False)  # During the evaluating,update=False
@@ -26,11 +27,13 @@ def evaluate_policy(args, env, agent, state_norm):
             else:
                 action = a
             s_, r, done, _ = env.step(action)
+            # todo append
             if args.use_state_norm:
                 s_ = state_norm(s_, update=False)
             episode_reward += r
             s = s_
         evaluate_reward += episode_reward
+        # todo 画图 plt.save
 
     return evaluate_reward / times
 
@@ -94,7 +97,9 @@ def main(args, env_name, number, seed):
             else:
                 action = a
             s_, r, done, _ = env.step(action)
-
+            # print(s_)
+            # print(a)
+            # print(r)
             if args.use_state_norm:
                 s_ = state_norm(s_)
             if args.use_reward_norm:

@@ -26,7 +26,8 @@ class MyEnv():
         self.reward = 0
         self.reward_rate = 1  # todo 奖励10倍于距离缩小
         # fixme 设定一个最终状态（悬停目标）
-        self.final_state = np.array([1.4, .0, .0, 0.45, .0, .0])  # 最终需要的观测值
+        # self.final_state = np.array([1.4, .0, .0, 0.45, .0, .0])  # 最终需要的观测值
+        self.final_state = np.array([15 / 180 * 3.1415, 0, 0, 0, 0, 0])  # 最终需要的观测值
         self.last_observation = np.zeros((len(self.final_state)))  # 最近一次的观测 -> 初始值是0，可修改
         self.last_distance = self.o_distance(self.final_state, self.last_observation)  # 初始化距离比较量
         self.total_step = 1
@@ -44,7 +45,7 @@ class MyEnv():
     #     return a * self.action_bound / 5
 
     # 回合是否或者
-    def is_alive(self, state: np.array):
+    def is_dead(self, state: np.array):
         return np.max(state) >= 15 or np.min(state) <= -15
 
     # 定义奖励：目前状态距目标的距离与前一次状态距目标的距离的差值按比例缩放
@@ -57,7 +58,7 @@ class MyEnv():
         # TODO 每个回合的步骤是否超过阈值，判断是否结束
         self.last_observation = device_next_state(self.last_observation, action.tolist())
         reward = self.get_reward(self.last_observation)
-        done = (not self.is_alive(self.last_observation)) or (self.total_step >= 1200)
+        done = (self.is_dead(self.last_observation)) or (self.total_step >= 1200)
         self.total_step += 1
         return self.last_observation, reward, done, 0
 
