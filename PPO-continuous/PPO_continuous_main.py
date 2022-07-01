@@ -97,7 +97,7 @@ def main(args, env_name, number, seed):
             else:
                 action = a
             s_, r, done, _ = env.step(action)
-            if episode_steps % 30 == 0:
+            if episode_steps % 300 == 0:
                 print('s:', s_, 'a:', a, 'r:', r)
                 # print(s)
                 # print(a)
