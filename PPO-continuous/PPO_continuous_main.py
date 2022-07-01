@@ -97,9 +97,11 @@ def main(args, env_name, number, seed):
             else:
                 action = a
             s_, r, done, _ = env.step(action)
-            # print(s_)
-            # print(a)
-            # print(r)
+            if episode_steps % 30 == 0:
+                print('s:', s_, 'a:', a, 'r:', r)
+                # print(s)
+                # print(a)
+                # print(r)
             if args.use_state_norm:
                 s_ = state_norm(s_)
             if args.use_reward_norm:

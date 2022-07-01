@@ -1,8 +1,11 @@
+import random
+
 import torch
 import torch.nn.functional as F
 from torch.utils.data.sampler import BatchSampler, SubsetRandomSampler
 import torch.nn as nn
 from torch.distributions import Beta, Normal
+from loguru import logger
 
 
 # Trick 8: orthogonal initialization
@@ -53,7 +56,8 @@ class Actor_Gaussian(nn.Module):
         self.fc1 = nn.Linear(args.state_dim, args.hidden_width)
         self.fc2 = nn.Linear(args.hidden_width, args.hidden_width)
         self.mean_layer = nn.Linear(args.hidden_width, args.action_dim)
-        self.log_std = nn.Parameter(torch.zeros(1, args.action_dim))  # We use 'nn.Paremeter' to train log_std automatically
+        self.log_std = nn.Parameter(
+            torch.zeros(1, args.action_dim))  # We use 'nn.Paremeter' to train log_std automatically
         self.activate_func = [nn.ReLU(), nn.Tanh()][args.use_tanh]  # Trick10: use tanh
 
         if args.use_orthogonal_init:
@@ -181,7 +185,8 @@ class PPO_continuous():
                 dist_entropy = dist_now.entropy().sum(1, keepdim=True)  # shape(mini_batch_size X 1)
                 a_logprob_now = dist_now.log_prob(a[index])
                 # a/b=exp(log(a)-log(b))  In multi-dimensional continuous action space，we need to sum up the log_prob
-                ratios = torch.exp(a_logprob_now.sum(1, keepdim=True) - a_logprob[index].sum(1, keepdim=True))  # shape(mini_batch_size X 1)
+                ratios = torch.exp(a_logprob_now.sum(1, keepdim=True) - a_logprob[index].sum(1,
+                                                                                             keepdim=True))  # shape(mini_batch_size X 1)
 
                 surr1 = ratios * adv[index]  # Only calculate the gradient of 'a_logprob_now' in ratios
                 surr2 = torch.clamp(ratios, 1 - self.epsilon, 1 + self.epsilon) * adv[index]
@@ -198,6 +203,10 @@ class PPO_continuous():
                 # Update critic
                 self.optimizer_critic.zero_grad()
                 critic_loss.backward()
+                #######打印几个loss看下
+                rd = random.randint(0, 100)
+                if rd == 5: print('loss:', critic_loss)
+                ########
                 if self.use_grad_clip:  # Trick 7: Gradient clip
                     torch.nn.utils.clip_grad_norm_(self.critic.parameters(), 0.5)
                 self.optimizer_critic.step()
@@ -210,5 +219,7 @@ class PPO_continuous():
         lr_c_now = self.lr_c * (1 - total_steps / self.max_train_steps)
         for p in self.optimizer_actor.param_groups:
             p['lr'] = lr_a_now
+            logger.info('调整actor的学习率为：{}', lr_a_now)
         for p in self.optimizer_critic.param_groups:
             p['lr'] = lr_c_now
+            logger.info('调整critic的学习率为：{}', lr_a_now)
