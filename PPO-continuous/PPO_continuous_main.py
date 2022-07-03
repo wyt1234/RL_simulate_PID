@@ -124,7 +124,11 @@ def main(args, env_name, number, seed):
 
             # When the number of transitions in buffer reaches batch_size,then update
             if replay_buffer.count == args.batch_size:
-                agent.update(replay_buffer, total_steps)
+                lr_a, lr_c, loss = agent.update(replay_buffer, total_steps)  # 两个学习率也记录一下
+                writer.add_scalar('LR/lr_a_{}'.format(env_name), lr_a, global_step=total_steps)
+                writer.add_scalar('LR/lr_c_{}'.format(env_name), lr_c, global_step=total_steps)
+                writer.add_scalar('Loss/loss_{}'.format(env_name), loss, global_step=total_steps)
+                writer.add_scalar('Reword/last_reward_{}'.format(env_name), r, global_step=total_steps)
                 replay_buffer.count = 0
 
             # Evaluate the policy every 'evaluate_freq' steps

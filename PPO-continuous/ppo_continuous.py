@@ -214,6 +214,9 @@ class PPO_continuous():
         if self.use_lr_decay:  # Trick 6:learning rate Decay
             self.lr_decay(total_steps)
 
+        # 新增返回两学习率
+        return self.lr_a, self.lr_c, critic_loss
+
     def lr_decay(self, total_steps):
         lr_a_now = self.lr_a * (1 - total_steps / self.max_train_steps)
         lr_c_now = self.lr_c * (1 - total_steps / self.max_train_steps)
