@@ -58,7 +58,7 @@ class MyEnv():
         # TODO 每个回合的步骤是否超过阈值，判断是否结束
         self.last_observation = device_next_state(self.last_observation, action.tolist())
         reward = self.get_reward(self.last_observation)
-        done = (self.is_dead(self.last_observation)) or (self.total_step >= 1200)
+        done = (self.is_dead(self.last_observation)) or (self.total_step >= 12000)
         self.total_step += 1
         return self.last_observation, reward, done, 0
 
