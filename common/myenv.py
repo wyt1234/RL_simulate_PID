@@ -24,7 +24,7 @@ class MyEnv():
         self.observation_space = Space(6)
         self.action_space = Space(2)
         self.reward = 0
-        self.reward_rate = 1  # todo 奖励10倍于距离缩小
+        self.reward_rate = 10  # todo 奖励10倍于距离缩小
         # fixme 设定一个最终状态（悬停目标）
         # self.final_state = np.array([1.4, .0, .0, 0.45, .0, .0])  # 最终需要的观测值
         self.final_state = np.array([15 / 180 * 3.1415, 0, 0, 0, 0, 0])  # 最终需要的观测值
@@ -46,7 +46,7 @@ class MyEnv():
 
     # 回合是否或者
     def is_dead(self, state: np.array):
-        return np.max(state) >= 15 or np.min(state) <= -15
+        return np.max(state[:3]) >= 1.05 or np.min(state[:3]) <= -1.05
 
     # 定义奖励：目前状态距目标的距离与前一次状态距目标的距离的差值按比例缩放
     def get_reward(self, state: np.array):

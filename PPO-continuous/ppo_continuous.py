@@ -212,11 +212,14 @@ class PPO_continuous():
                 self.optimizer_critic.step()
 
         if self.use_lr_decay:  # Trick 6:learning rate Decay
-            self.lr_decay(total_steps)
+            lr_a_now, lr_c_now = self.lr_decay(total_steps)
+            # 一般会走到这里，输出修改后的的学习率
+            return lr_a_now, lr_c_now, critic_loss
 
-        # 新增返回两学习率
+        # 新增返回两学习率（self.lr_a是原始学习率）
         return self.lr_a, self.lr_c, critic_loss
 
+    # trick：学习率衰减
     def lr_decay(self, total_steps):
         lr_a_now = self.lr_a * (1 - total_steps / self.max_train_steps)
         lr_c_now = self.lr_c * (1 - total_steps / self.max_train_steps)
@@ -226,3 +229,4 @@ class PPO_continuous():
         for p in self.optimizer_critic.param_groups:
             p['lr'] = lr_c_now
             logger.info('调整critic的学习率为：{}', lr_a_now)
+        return lr_a_now, lr_c_now
