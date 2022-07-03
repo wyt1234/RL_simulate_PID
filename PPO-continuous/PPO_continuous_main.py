@@ -13,6 +13,7 @@ from ppo_continuous import PPO_continuous
 def evaluate_policy(args, env, agent, state_norm):
     times = 3
     evaluate_reward = 0
+    hand_on_step = 0  # 新增：总的
     for _ in range(times):
         # todo re_list = []
         s = env.reset()
@@ -20,6 +21,7 @@ def evaluate_policy(args, env, agent, state_norm):
             s = state_norm(s, update=False)  # During the evaluating,update=False
         done = False
         episode_reward = 0
+        step = 0  # 新增：每回合坚持回合数
         while not done:
             a = agent.evaluate(s)  # We use the deterministic policy during the evaluating
             if args.policy_dist == "Beta":
@@ -32,10 +34,12 @@ def evaluate_policy(args, env, agent, state_norm):
                 s_ = state_norm(s_, update=False)
             episode_reward += r
             s = s_
+            step += 1
+        hand_on_step += step
         evaluate_reward += episode_reward
         # todo 画图 plt.save
-
-    return evaluate_reward / times
+    # 新增：平均每回合坚持step数量
+    return evaluate_reward / times, hand_on_step / times
 
 
 def main(args, env_name, number, seed):
@@ -134,10 +138,11 @@ def main(args, env_name, number, seed):
             # Evaluate the policy every 'evaluate_freq' steps
             if total_steps % args.evaluate_freq == 0:
                 evaluate_num += 1
-                evaluate_reward = evaluate_policy(args, env_evaluate, agent, state_norm)
+                evaluate_reward, hand_on_steps = evaluate_policy(args, env_evaluate, agent, state_norm)
                 evaluate_rewards.append(evaluate_reward)
                 print("evaluate_num:{} \t evaluate_reward:{} \t".format(evaluate_num, evaluate_reward))
                 writer.add_scalar('step_rewards_{}'.format(env_name), evaluate_rewards[-1], global_step=total_steps)
+                writer.add_scalar('hand_on_steps_{}'.format(env_name), hand_on_steps, global_step=total_steps)
                 # Save the rewards
                 if evaluate_num % args.save_freq == 0:
                     np.save(
