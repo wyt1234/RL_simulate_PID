@@ -149,6 +149,9 @@ def main(args, env_name, number, seed):
                         './data_train/PPO_continuous_{}_env_{}_number_{}_seed_{}.npy'.format(args.policy_dist, env_name,
                                                                                              number, seed),
                         np.array(evaluate_rewards))
+                    # 保存模型v -> 只存个actor就行了
+                    if evaluate_rewards[-1] > evaluate_rewards[-2]:
+                        torch.save(agent.actor, './data_train/PPO_actor_newest.pth')
 
 
 if __name__ == '__main__':
