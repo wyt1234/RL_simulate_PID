@@ -150,7 +150,7 @@ def main(args, env_name, number, seed):
                                                                                              number, seed),
                         np.array(evaluate_rewards))
                     # 保存模型v -> 只存个actor就行了
-                    if evaluate_rewards[-1] > evaluate_rewards[-2]:
+                    if evaluate_rewards[-1] > evaluate_rewards[-2] and total_steps > 400 * 1e3:
                         torch.save(agent.actor, './data_train/PPO_actor_newest.pth')
 
 
