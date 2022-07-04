@@ -51,8 +51,9 @@ class MyEnv():
     # 定义奖励：目前状态距目标的距离与前一次状态距目标的距离的差值按比例缩放
     def get_reward(self, state: np.array):
         distance = self.o_distance(state, self.final_state)
-        self.reward = self.reward_rate * (distance - self.last_distance)
-        return self.reward
+        # self.reward = self.reward_rate * (distance - self.last_distance)
+        # return self.reward
+        return -distance * self.reward_rate + 10
 
     def step(self, action: torch.Tensor):
         # TODO 每个回合的步骤是否超过阈值，判断是否结束
