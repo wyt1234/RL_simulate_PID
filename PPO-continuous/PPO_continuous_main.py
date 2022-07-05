@@ -133,6 +133,17 @@ def main(args, env_name, number, seed):
                 writer.add_scalar('LR/lr_c_{}'.format(env_name), lr_c, global_step=total_steps)
                 writer.add_scalar('Loss/loss_{}'.format(env_name), loss, global_step=total_steps)
                 writer.add_scalar('Reword/last_reward_{}'.format(env_name), r, global_step=total_steps)
+                # U
+                writer.add_scalar('U/left', a[0], global_step=total_steps)
+                writer.add_scalar('U/right', a[1], global_step=total_steps)
+                # S
+                writer.add_scalar('State/epi', s[0], global_step=total_steps)
+                writer.add_scalar('State/rou', s[1], global_step=total_steps)
+                writer.add_scalar('State/lam', s[2], global_step=total_steps)
+                #
+                writer.add_scalar('StateDot/epi_dot', s[3], global_step=total_steps)
+                writer.add_scalar('StateDot/rou_dot', s[4], global_step=total_steps)
+                writer.add_scalar('StateDot/lam_dot', s[5], global_step=total_steps)
                 replay_buffer.count = 0
 
             # Evaluate the policy every 'evaluate_freq' steps
@@ -142,7 +153,7 @@ def main(args, env_name, number, seed):
                 evaluate_rewards.append(evaluate_reward)
                 print("evaluate_num:{} \t evaluate_reward:{} \t".format(evaluate_num, evaluate_reward))
                 writer.add_scalar('step_rewards_{}'.format(env_name), evaluate_rewards[-1], global_step=total_steps)
-                writer.add_scalar('hand_on_steps_{}'.format(env_name), hand_on_steps, global_step=total_steps)
+                writer.add_scalar('hold_on_steps_{}'.format(env_name), hand_on_steps, global_step=total_steps)
                 # Save the rewards
                 if evaluate_num % args.save_freq == 0:
                     np.save(
@@ -150,7 +161,7 @@ def main(args, env_name, number, seed):
                                                                                              number, seed),
                         np.array(evaluate_rewards))
                     # 保存模型v -> 只存个actor就行了
-                    if evaluate_rewards[-1] > evaluate_rewards[-2] and total_steps > 400 * 1e3:
+                    if evaluate_rewards[-1] > evaluate_rewards[-2] and total_steps > 80 * 1e3:
                         torch.save(agent.actor, './data_train/PPO_actor_newest.pth')
 
 
